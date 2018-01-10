@@ -9,7 +9,6 @@ end if;
 RETURN result;
 END$$
 DELIMITER ;
-
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` FUNCTION `datetime_format_function`(codeType varchar(50),stringDate varchar(50)) RETURNS datetime
 BEGIN
@@ -22,8 +21,6 @@ end if;
 RETURN result;
 END$$
 DELIMITER ;
-SELECT * FROM msbi.backup_log;
-
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` FUNCTION `split_function`(
 splitString varchar(10000),
