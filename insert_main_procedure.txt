@@ -1,0 +1,30 @@
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_main_procedure`()
+BEGIN
+
+
+SET SQL_SAFE_UPDATES = 0;
+/*???log_txt?????????*/
+SET @LOG_FLAG = (SELECT count(1) from logtxt where log_type=3);
+IF @LOG_FLAG>0 
+THEN
+
+delete from main;
+insert IGNORE into main(SERVER_NAME,DOMAIN_NAME,SCHEDULE_NAME,NODE_NAME,INSERT_DATE_TIME,MESSAGE)
+select
+split_function(log,',',1),
+split_function(log,',',2),
+split_function(log,',',3),
+split_function(log,',',4),
+current_timestamp,
+log
+from logtxt
+WHERE log NOT REGEXP 'command ''SELECT''|against server|command SELECT|No match found' and log_type=3;
+delete from logtxt where log_type=3;
+END IF;
+END

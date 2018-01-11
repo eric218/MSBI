@@ -32,4 +32,3 @@ where log like '%completed successfully at%' and log like '%(SESSION:%' and log_
 delete from logtxt where log_type=1;
 END IF;
 END
-

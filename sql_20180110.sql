@@ -113,6 +113,24 @@ CREATE TABLE `lookup` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `main`
+--
+
+DROP TABLE IF EXISTS `main`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `main` (
+  `SERVER_NAME` varchar(45) DEFAULT NULL,
+  `DOMAIN_NAME` varchar(45) DEFAULT NULL,
+  `SCHEDULE_NAME` varchar(45) DEFAULT NULL,
+  `NODE_NAME` varchar(45) DEFAULT NULL,
+  `INSERT_DATE_TIME` datetime DEFAULT NULL,
+  `MESSAGE` varchar(200) NOT NULL,
+  PRIMARY KEY (`MESSAGE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `month_report`
 --
 
@@ -362,6 +380,43 @@ CREATE TABLE `schedule_history` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `schedule_newest`
+--
+
+DROP TABLE IF EXISTS `schedule_newest`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `schedule_newest` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `DOMAIN_NAME` varchar(200) DEFAULT NULL,
+  `SCHEDULE_NAME` varchar(200) DEFAULT NULL,
+  `DESCRIPTION` varchar(200) DEFAULT NULL,
+  `ACTIONS` varchar(50) DEFAULT NULL,
+  `SUBACTION` varchar(50) DEFAULT NULL,
+  `PRIORITY` int(11) DEFAULT NULL,
+  `START_DATE` date DEFAULT NULL,
+  `START_DATE_TIME` datetime DEFAULT NULL,
+  `DURATION` int(11) DEFAULT NULL,
+  `DURUNITS` varchar(10) DEFAULT NULL,
+  `MAXRUNTIME` int(11) DEFAULT NULL,
+  `PERIOD` int(11) DEFAULT NULL,
+  `PERUNITS` varchar(10) DEFAULT NULL,
+  `DATE_OF_WEEK` varchar(50) DEFAULT NULL,
+  `EACH_MONTH` varchar(20) DEFAULT NULL,
+  `DATE_OF_MONTH` varchar(100) DEFAULT NULL,
+  `WEEK_OF_MONTH` varchar(100) DEFAULT NULL,
+  `SCHED_STYLE` varchar(10) DEFAULT NULL,
+  `OPTIONES` varchar(2000) DEFAULT NULL,
+  `OBJECT` varchar(2048) DEFAULT NULL,
+  `INSERT_TIME` varchar(45) DEFAULT NULL,
+  `MESSAGE` varchar(2000) DEFAULT NULL,
+  `ENABLED` int(11) DEFAULT NULL COMMENT '是否enabled,1.是,0否',
+  `INSERT_DATE` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=37868 DEFAULT CHARSET=utf8 COMMENT='schedule 当天';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `schedule_temp`
 --
 
@@ -381,9 +436,9 @@ CREATE TABLE `schedule_temp` (
   `DURATION` int(11) DEFAULT NULL,
   `DURUNITS` varchar(10) DEFAULT NULL,
   `MAXRUNTIME` int(11) DEFAULT NULL,
-  `PERIOD` int(11) NOT NULL,
-  `PERUNITS` varchar(10) NOT NULL DEFAULT '',
-  `DATE_OF_WEEK` varchar(50) NOT NULL DEFAULT '',
+  `PERIOD` int(11) DEFAULT NULL,
+  `PERUNITS` varchar(10) DEFAULT NULL,
+  `DATE_OF_WEEK` varchar(50) DEFAULT NULL,
   `EACH_MONTH` varchar(20) DEFAULT NULL,
   `DATE_OF_MONTH` varchar(100) DEFAULT NULL,
   `WEEK_OF_MONTH` varchar(100) DEFAULT NULL,
@@ -394,8 +449,45 @@ CREATE TABLE `schedule_temp` (
   `MESSAGE` varchar(2000) DEFAULT NULL,
   `ENABLED` int(11) DEFAULT NULL COMMENT '是否enabled,1.是,0否',
   `INSERT_DATE` date DEFAULT NULL,
-  PRIMARY KEY (`id`,`PERIOD`,`PERUNITS`,`DATE_OF_WEEK`)
-) ENGINE=InnoDB AUTO_INCREMENT=32085 DEFAULT CHARSET=utf8 COMMENT='schedule 当天';
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=32097 DEFAULT CHARSET=utf8 COMMENT='schedule 当天';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `schedule_temp_2`
+--
+
+DROP TABLE IF EXISTS `schedule_temp_2`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `schedule_temp_2` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `DOMAIN_NAME` varchar(200) DEFAULT NULL,
+  `SCHEDULE_NAME` varchar(200) DEFAULT NULL,
+  `DESCRIPTION` varchar(200) DEFAULT NULL,
+  `ACTIONS` varchar(50) DEFAULT NULL,
+  `SUBACTION` varchar(50) DEFAULT NULL,
+  `PRIORITY` int(11) DEFAULT NULL,
+  `START_DATE` date DEFAULT NULL,
+  `START_DATE_TIME` datetime DEFAULT NULL,
+  `DURATION` int(11) DEFAULT NULL,
+  `DURUNITS` varchar(10) DEFAULT NULL,
+  `MAXRUNTIME` int(11) DEFAULT NULL,
+  `PERIOD` int(11) DEFAULT NULL,
+  `PERUNITS` varchar(10) DEFAULT NULL,
+  `DATE_OF_WEEK` varchar(50) DEFAULT NULL,
+  `EACH_MONTH` varchar(20) DEFAULT NULL,
+  `DATE_OF_MONTH` varchar(100) DEFAULT NULL,
+  `WEEK_OF_MONTH` varchar(100) DEFAULT NULL,
+  `SCHED_STYLE` varchar(10) DEFAULT NULL,
+  `OPTIONES` varchar(2000) DEFAULT NULL,
+  `OBJECT` varchar(2048) DEFAULT NULL,
+  `INSERT_TIME` varchar(45) DEFAULT NULL,
+  `MESSAGE` varchar(2000) DEFAULT NULL,
+  `ENABLED` int(11) DEFAULT NULL COMMENT '是否enabled,1.是,0否',
+  `INSERT_DATE` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=32097 DEFAULT CHARSET=utf8 COMMENT='schedule 当天';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -422,4 +514,4 @@ CREATE TABLE `total_title` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-10 11:33:44
+-- Dump completed on 2018-01-11 17:03:41
