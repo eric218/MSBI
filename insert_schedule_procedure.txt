@@ -56,7 +56,6 @@ col21 as SCHED_STYLE,col6 as OPTIONES,col7 as OBJECT, current_timestamp as INSER
 from logtxt_temp;
 
 /*??message?????*/
-insert into schedule_temp2(select * from schedule_temp);
 insert into schedule_temp_2(select * from schedule_temp);
 delete FROM schedule_temp  WHERE message in (SELECT message
 FROM schedule_temp_2
