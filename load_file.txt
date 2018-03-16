@@ -99,3 +99,31 @@ delete from logtxt where log_type=3;
 load data local infile "C:/MSBI/associateFileTotal.txt_2017406_200"
 into table logtxt(log)  set LOG_TYPE=3;
 call insert_main_procedure();
+
+delete from backup_log_non_prod;
+delete from logtxt WHERE LOG_TYPE=4;
+load data local infile "C:/SSISInuptFiles/NON_PROD/newdaily.txt_20180307.txt"
+into table logtxt(log)  set LOG_TYPE=4;
+load data local infile "C:/SSISInuptFiles/NON_PROD/newdaily.txt_20180308.txt"
+into table logtxt(log)  set LOG_TYPE=4;
+load data local infile "C:/SSISInuptFiles/NON_PROD/newdaily.txt_20180309.txt"
+into table logtxt(log)  set LOG_TYPE=4;
+load data local infile "C:/SSISInuptFiles/NON_PROD/newdaily.txt_20180313.txt"
+into table logtxt(log)  set LOG_TYPE=4;
+load data local infile "C:/SSISInuptFiles/NON_PROD/newdaily.txt_20180315.txt"
+into table logtxt(log)  set LOG_TYPE=4;
+call insert_backup_log_non_prod_sucessful_procedure();
+
+use msbi;
+SET SQL_SAFE_UPDATES = 0;
+delete from logtxt where log_type=5;
+load data local infile "C:/SSISInuptFiles/NON_PROD/schedule/schedule_20180315.txt" 
+into table logtxt(log)  set LOG_TYPE=5;
+call insert_schedule_non_prod_procedure();
+
+delete from logtxt where log_type=6;
+load data local infile "C:/SSISInuptFiles/NON_PROD/newassoc.txt_2018315.txt"
+into table logtxt(log)  set LOG_TYPE=6;
+call insert_main_non_prod_procedure();
+
+

@@ -44,7 +44,9 @@ split_function(log,',',25),
 log
 from logtxt
 WHERE log NOT REGEXP 'command ''SELECT''|against server|command SELECT' and log_type=2;
+/*??schedule_temp*/
 delete from schedule_temp;
+
 insert  into schedule_temp(DOMAIN_NAME,SCHEDULE_NAME,DESCRIPTION,ACTIONS,SUBACTION,PRIORITY,START_DATE,START_DATE_TIME,DURATION,
 						DURUNITS,MAXRUNTIME,PERIOD,PERUNITS,DATE_OF_WEEK,EACH_MONTH,DATE_OF_MONTH,WEEK_OF_MONTH,SCHED_STYLE,OPTIONES,OBJECT,INSERT_TIME,MESSAGE,ENABLED,INSERT_DATE)
 
@@ -56,21 +58,22 @@ col21 as SCHED_STYLE,col6 as OPTIONES,col7 as OBJECT, current_timestamp as INSER
 from logtxt_temp;
 
 /*??message?????*/
-insert into schedule_temp_2(select * from schedule_temp);
-delete FROM schedule_temp  WHERE message in (SELECT message
-FROM schedule_temp_2
-GROUP BY message
-HAVING COUNT( 1 ) >1) and id not in (select max(id) from schedule_temp_2 group by message having count(1) > 1);
-DELETE FROM schedule_temp_2;
-/*???schedule????schedule_temp???????????history?
-insert into schedule_history(
-select a.* from schedule a left join schedule_temp b on a.DOMAIN_NAME=b.DOMAIN_NAME and a.SCHEDULE_NAME=B.SCHEDULE_NAME
-WHERE (a.DATE_OF_WEEK<>b.DATE_OF_WEEK or a.DATE_OF_MONTH<>b.DATE_OF_MONTH or  a.WEEK_OF_MONTH<>b.WEEK_OF_MONTH));
-*/
 /*??schedule?*/
 delete from schedule;
 /*?????*/
-insert into schedule(select * from schedule_temp);
+insert into schedule(
+select *  FROM schedule_temp  WHERE message in (SELECT message
+FROM schedule_temp
+GROUP BY message
+HAVING COUNT( 1 ) >1) and id= (select max(id) from schedule_temp group by message having count(1) > 1)
+);
+insert into schedule(
+select *  FROM schedule_temp a WHERE exists (SELECT message
+FROM schedule_temp
+where schedule_temp.message = a.message
+GROUP BY schedule_temp.message
+HAVING COUNT( 1 ) =1)
+);
 /*????????schedule_newwest*/
 delete from schedule_newest;
 
