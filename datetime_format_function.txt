@@ -1,0 +1,16 @@
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `datetime_format_function`(codeType varchar(50),stringDate varchar(50)) RETURNS datetime
+BEGIN
+declare result datetime;
+set result = null;
+if codeType='' then set result=str_to_date(stringDate, '%m%d%Y %H%i%s');
+elseif codeType='-' then set result=str_to_date(stringDate, '%Y-%m-%d %H.%i');
+elseif codeType='-1' then set result=str_to_date(stringDate, '%Y-%m-%d %H%i%s');
+end if;
+RETURN result;
+END
