@@ -1,17 +1,27 @@
 use msbi;
 SET SQL_SAFE_UPDATES = 0;
-
-delete from msbi.files_load;
-delete from msbi.backup_log;
 delete from msbi.logtxt;
 delete from msbi.logtxt_temp;
+delete from msbi.files_load;
+delete from msbi.backup_log;
 delete from msbi.main;
 delete from msbi.month_report;
-delete from msbi.month_report_temp;
 delete from msbi.schedule;
 delete from msbi.schedule_history;
 delete from msbi.schedule_newest;
-delete from msbi.schedule_temp;
+
+
+use msbi;
+SET SQL_SAFE_UPDATES = 0;
+delete from msbi.logtxt;
+delete from msbi.logtxt_temp;
+delete from msbi.files_load_non_prod;
+delete from msbi.backup_log_non_prod;
+delete from msbi.main_non_prod;
+delete from msbi.month_report;
+delete from msbi.month_report_non_prod;
+delete from msbi.schedule;
+delete from msbi.schedule_newest_non_prod;
 
 delete from logtxt WHERE LOG_TYPE=1;
 load data local infile "C:/MSBI/log/log_2017_03_30.txt_20170406_200"

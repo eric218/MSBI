@@ -1,0 +1,336 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_backup_log_non_prod_sucessful_procedure`()
+BEGIN
+SET SQL_SAFE_UPDATES = 0;
+/*???log_txt?????????*/
+SET @LOG_FLAG = (SELECT count(1) from logtxt where log_type=4);
+IF @LOG_FLAG>0 
+THEN
+insert IGNORE into backup_log_non_prod (SERVER_NAME,DOMAIN_NAME,NODE_NAME,SCHEDULE_NAME,MESSAGE,DONE_DATE,DONE_DATE_TIME,IS_SUCCESS,LOG_DATE,LOG_DATE_TIME,START_DATE,START_DATE_TIME,INSERT_DATE_TIME,UPDATE_DATE_TIME) 
+select
+	split_function(log,',',1) AS SERVER_NAME,
+	split_function((split_function(log,',',6)),' ',6) AS DOMAIN_NAME,
+	split_function((split_function(log,',',6)),' ',13) AS NODE_NAME,
+	split_function((split_function(log,',',6)),' ',3) AS SCHEDULE_NAME,
+	split_function(log,',',6) AS MESSAGE,
+	date_format_function('/',split_function((split_function(log,',',6)),' ',17)) AS DONE_DATE,
+	datetime_format_function('/',(replace(CONCAT(split_function((split_function(log,',',6)),' ',17),' ',split_function((split_function(log,',',6)),' ',18)),'.',''))) AS DONE_DATE_TIME,
+	1 AS IS_SUCCESS,
+	split_function((split_function(log,',',2)),' ',1) AS LOG_DATE,
+	datetime_format_function('-',split_function(log,',',2)) AS LOG_DATE_TIME,
+	date_format_function('/',split_function((split_function(log,',',6)),' ',9)) AS START_DATE_TIME,
+	datetime_format_function('/',(replace(CONCAT(split_function((split_function(log,',',6)),' ',9),' ',split_function((split_function(log,',',6)),' ',10)),'.',''))) AS START_DATE_TIME,
+	current_timestamp AS INSERT_DATE_TIME,
+	current_timestamp AS UPDATE_DATE_TIME
+from logtxt
+where log like '%completed successfully at%' and log like '%(SESSION:%' and log_type=4;
+delete from logtxt where log_type=4;
+END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_backup_log_sucessful_procedure`()
+BEGIN
+SET SQL_SAFE_UPDATES = 0;
+/*???log_txt?????????*/
+SET @LOG_FLAG = (SELECT count(1) from logtxt where log_type=1);
+IF @LOG_FLAG>0 
+THEN
+insert IGNORE into backup_log (SERVER_NAME,DOMAIN_NAME,NODE_NAME,SCHEDULE_NAME,MESSAGE,DONE_DATE,DONE_DATE_TIME,IS_SUCCESS,LOG_DATE,LOG_DATE_TIME,START_DATE,START_DATE_TIME,INSERT_DATE_TIME,UPDATE_DATE_TIME) 
+select
+	split_function(log,',',1) AS SERVER_NAME,
+	split_function((split_function(log,',',6)),' ',6) AS DOMAIN_NAME,
+	split_function((split_function(log,',',6)),' ',13) AS NODE_NAME,
+	split_function((split_function(log,',',6)),' ',3) AS SCHEDULE_NAME,
+	split_function(log,',',6) AS MESSAGE,
+	date_format_function('/',split_function((split_function(log,',',6)),' ',17)) AS DONE_DATE,
+	datetime_format_function('/',(replace(CONCAT(split_function((split_function(log,',',6)),' ',17),' ',split_function((split_function(log,',',6)),' ',18)),'.',''))) AS DONE_DATE_TIME,
+	1 AS IS_SUCCESS,
+	split_function((split_function(log,',',2)),' ',1) AS LOG_DATE,
+	datetime_format_function('-',split_function(log,',',2)) AS LOG_DATE_TIME,
+	date_format_function('/',split_function((split_function(log,',',6)),' ',9)) AS START_DATE_TIME,
+	datetime_format_function('/',(replace(CONCAT(split_function((split_function(log,',',6)),' ',9),' ',split_function((split_function(log,',',6)),' ',10)),'.',''))) AS START_DATE_TIME,
+	current_timestamp AS INSERT_DATE_TIME,
+	current_timestamp AS UPDATE_DATE_TIME
+from logtxt
+where log like '%completed successfully at%' and log like '%(SESSION:%' and log_type=1;
+delete from logtxt where log_type=1;
+END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_main_non_prod_procedure`()
+BEGIN
+
+
+SET SQL_SAFE_UPDATES = 0;
+/*???log_txt?????????*/
+SET @LOG_FLAG = (SELECT count(1) from logtxt where log_type=6);
+IF @LOG_FLAG>0 
+THEN
+
+delete from main_non_prod;
+insert IGNORE into main_non_prod(SERVER_NAME,DOMAIN_NAME,SCHEDULE_NAME,NODE_NAME,INSERT_DATE_TIME,MESSAGE)
+select
+split_function(log,',',1),
+split_function(log,',',2),
+split_function(log,',',3),
+split_function(log,',',4),
+current_timestamp,
+log
+from logtxt
+WHERE log NOT REGEXP 'command ''SELECT''|against server|command SELECT|No match found' and log_type=6;
+delete from logtxt where log_type=6;
+END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_main_procedure`()
+BEGIN
+
+
+SET SQL_SAFE_UPDATES = 0;
+/*???log_txt?????????*/
+SET @LOG_FLAG = (SELECT count(1) from logtxt where log_type=3);
+IF @LOG_FLAG>0 
+THEN
+
+delete from main;
+insert IGNORE into main(SERVER_NAME,DOMAIN_NAME,SCHEDULE_NAME,NODE_NAME,INSERT_DATE_TIME,MESSAGE)
+select
+split_function(log,',',1),
+split_function(log,',',2),
+split_function(log,',',3),
+split_function(log,',',4),
+current_timestamp,
+log
+from logtxt
+WHERE log NOT REGEXP 'command ''SELECT''|against server|command SELECT|No match found' and log_type=3;
+delete from logtxt where log_type=3;
+END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_schedule_non_prod_procedure`()
+BEGIN
+/*?????????schedule??*/
+SET SQL_SAFE_UPDATES = 0;
+/*???log_txt?????????*/
+SET @LOG_FLAG = (SELECT count(1) from logtxt where log_type=5);
+IF @LOG_FLAG>0 
+THEN
+
+delete from logtxt_temp;
+insert into logtxt_temp(col1,col2,col3,col4,col5,col6,col7,col8,col9,col10,col11,col12,col13,col14,col15,col16,col17,col18,col19,col20,col21,col22,col23,col24,col25,col26,col27)
+select
+split_function(log,',',1),
+split_function(log,',',2),
+split_function(log,',',3),
+split_function(log,',',4),
+split_function(log,',',5),
+split_function(log,',',6),
+split_function(log,',',7),
+split_function(log,',',8),
+split_function(log,',',9),
+split_function(log,',',10),
+split_function(log,',',11),
+split_function(log,',',12),
+split_function(log,',',13),
+split_function(log,',',14),
+split_function(log,',',15),
+split_function(log,',',16),
+split_function(log,',',17),
+split_function(log,',',18),
+split_function(log,',',19),
+split_function(log,',',20),
+split_function(log,',',21),
+split_function(log,',',22),
+split_function(log,',',23),
+split_function(log,',',24),
+split_function(log,',',25),
+split_function(log,',',26),
+log
+from logtxt
+WHERE log_type=5;
+/*WHERE log NOT REGEXP 'command ''SELECT''|against server|command SELECT' and log_type=5; */
+delete from schedule_newest_non_prod;
+insert  into schedule_newest_non_prod(SERVER_NAME,DOMAIN_NAME,SCHEDULE_NAME,DESCRIPTION,ACTIONS,SUBACTION,PRIORITY,START_DATE,START_DATE_TIME,DURATION,
+						DURUNITS,MAXRUNTIME,PERIOD,PERUNITS,DATE_OF_WEEK,EACH_MONTH,DATE_OF_MONTH,WEEK_OF_MONTH,SCHED_STYLE,OPTIONES,OBJECT,INSERT_TIME,MESSAGE,ENABLED,INSERT_DATE)
+
+select 
+col1 as SERVER_NAME,col2 as DOMAIN_NAME,col3 as SCHEDULE_NAME,col4 as DESCRIPTION,col5 as ACTIONS,col6 as SUBACTION,
+col9 as PRIORITY,date_format_function('-',col10) as START_DATE, datetime_format_function('-1',CONCAT(col10,' ',col11)) as START_DATE_TIME,
+col12 as DURATION,col13 as DURUNITS,col14 as MAXRUNTIME,if(col15='',0,col15) as PERIOD,col16 as PERUNITS,col17 as DATE_OF_WEEK,col23 as EACH_MONTH,col24 as DATE_OF_MONTH,col25 as WEEK_OF_MONTH,
+col22 as SCHED_STYLE,col7 as OPTIONES,col8 as OBJECT, current_timestamp as INSERT_TIME,null,1,CURDATE()
+from logtxt_temp;
+
+delete from logtxt_temp;
+delete from logtxt where log_type=5;
+
+END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_schedule_procedure`()
+BEGIN
+/*?????????schedule??*/
+SET SQL_SAFE_UPDATES = 0;
+/*???log_txt?????????*/
+SET @LOG_FLAG = (SELECT count(1) from logtxt where log_type=2);
+IF @LOG_FLAG>0 
+THEN
+
+delete from logtxt_temp;
+insert into logtxt_temp(col1,col2,col3,col4,col5,col6,col7,col8,col9,col10,col11,col12,col13,col14,col15,col16,col17,col18,col19,col20,col21,col22,col23,col24,col25,col26,col27)
+select
+split_function(log,',',1),
+split_function(log,',',2),
+split_function(log,',',3),
+split_function(log,',',4),
+split_function(log,',',5),
+split_function(log,',',6),
+split_function(log,',',7),
+split_function(log,',',8),
+split_function(log,',',9),
+split_function(log,',',10),
+split_function(log,',',11),
+split_function(log,',',12),
+split_function(log,',',13),
+split_function(log,',',14),
+split_function(log,',',15),
+split_function(log,',',16),
+split_function(log,',',17),
+split_function(log,',',18),
+split_function(log,',',19),
+split_function(log,',',20),
+split_function(log,',',21),
+split_function(log,',',22),
+split_function(log,',',23),
+split_function(log,',',24),
+split_function(log,',',25),
+split_function(log,',',26),
+log
+from logtxt
+WHERE log_type=2;
+/*WHERE log NOT REGEXP 'command ''SELECT''|against server|command SELECT' and log_type=5; */
+delete from schedule_newest;
+insert  into schedule_newest(SERVER_NAME,DOMAIN_NAME,SCHEDULE_NAME,DESCRIPTION,ACTIONS,SUBACTION,PRIORITY,START_DATE,START_DATE_TIME,DURATION,
+						DURUNITS,MAXRUNTIME,PERIOD,PERUNITS,DATE_OF_WEEK,EACH_MONTH,DATE_OF_MONTH,WEEK_OF_MONTH,SCHED_STYLE,OPTIONES,OBJECT,INSERT_TIME,MESSAGE,ENABLED,INSERT_DATE)
+
+select 
+col1 as SERVER_NAME,col2 as DOMAIN_NAME,col3 as SCHEDULE_NAME,col4 as DESCRIPTION,col5 as ACTIONS,col6 as SUBACTION,
+col9 as PRIORITY,date_format_function('-',col10) as START_DATE, datetime_format_function('-1',CONCAT(col10,' ',col11)) as START_DATE_TIME,
+col12 as DURATION,col13 as DURUNITS,col14 as MAXRUNTIME,if(col15='',0,col15) as PERIOD,col16 as PERUNITS,col17 as DATE_OF_WEEK,col23 as EACH_MONTH,col24 as DATE_OF_MONTH,col25 as WEEK_OF_MONTH,
+col22 as SCHED_STYLE,col7 as OPTIONES,col8 as OBJECT, current_timestamp as INSERT_TIME,null,1,CURDATE()
+from logtxt_temp;
+
+delete from logtxt_temp;
+delete from logtxt where log_type=2;
+END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_schedule_procedureTtemp`()
+BEGIN
+/*?????????schedule??*/
+SET SQL_SAFE_UPDATES = 0;
+/*???log_txt?????????*/
+SET @LOG_FLAG = (SELECT count(1) from logtxt where log_type=2);
+IF @LOG_FLAG>0 
+THEN
+
+delete from logtxt_temp;
+insert into logtxt_temp(col1,col2,col3,col4,col5,col6,col7,col8,col9,col10,col11,col12,col13,col14,col15,col16,col17,col18,col19,col20,col21,col22,col23,col24,col25,col26)
+select
+split_function(log,',',1),
+split_function(log,',',2),
+split_function(log,',',3),
+split_function(log,',',4),
+split_function(log,',',5),
+split_function(log,',',6),
+split_function(log,',',7),
+split_function(log,',',8),
+split_function(log,',',9),
+split_function(log,',',10),
+split_function(log,',',11),
+split_function(log,',',12),
+split_function(log,',',13),
+split_function(log,',',14),
+split_function(log,',',15),
+split_function(log,',',16),
+split_function(log,',',17),
+split_function(log,',',18),
+split_function(log,',',19),
+split_function(log,',',20),
+split_function(log,',',21),
+split_function(log,',',22),
+split_function(log,',',23),
+split_function(log,',',24),
+split_function(log,',',25),
+log
+from logtxt
+WHERE log NOT REGEXP 'command ''SELECT''|against server|command SELECT' and log_type=2;
+/*??schedule_temp*/
+delete from schedule_temp;
+
+insert  into schedule_temp(DOMAIN_NAME,SCHEDULE_NAME,DESCRIPTION,ACTIONS,SUBACTION,PRIORITY,START_DATE,START_DATE_TIME,DURATION,
+						DURUNITS,MAXRUNTIME,PERIOD,PERUNITS,DATE_OF_WEEK,EACH_MONTH,DATE_OF_MONTH,WEEK_OF_MONTH,SCHED_STYLE,OPTIONES,OBJECT,INSERT_TIME,MESSAGE,ENABLED,INSERT_DATE)
+
+select 
+col1 as DOMAIN_NAME,col2 as SCHEDULE_NAME,col3 as DESCRIPTION,col4 as ACTIONS,col5 as SUBACTION,
+col8 as PRIORITY,date_format_function('-',col9) as START_DATE, datetime_format_function('-1',CONCAT(col9,' ',col10)) as START_DATE_TIME,
+col11 as DURATION,col12 as DURUNITS,col13 as MAXRUNTIME,if(col14='',0,col14) as PERIOD,col15 as PERUNITS,col16 as DATE_OF_WEEK,col22 as EACH_MONTH,col23 as DATE_OF_MONTH,col24 as WEEK_OF_MONTH,
+col21 as SCHED_STYLE,col6 as OPTIONES,col7 as OBJECT, current_timestamp as INSERT_TIME,col26,1,CURDATE()
+from logtxt_temp;
+
+/*??message?????*/
+/*??schedule?*/
+delete from schedule;
+/*?????*/
+insert into schedule(
+select *  FROM schedule_temp  WHERE message in (SELECT message
+FROM schedule_temp
+GROUP BY message
+HAVING COUNT( 1 ) >1) and id= (select max(id) from schedule_temp group by message having count(1) > 1)
+);
+insert into schedule(
+select *  FROM schedule_temp a WHERE exists (SELECT message
+FROM schedule_temp
+where schedule_temp.message = a.message
+GROUP BY schedule_temp.message
+HAVING COUNT( 1 ) =1)
+);
+/*????????schedule_newwest*/
+delete from schedule_newest;
+
+/*?????,SCHEDULE_NAME??,??????;????,?main?? domain???*/
+insert into schedule_newest(
+select * from SCHEDULE a where a.SCHEDULE_NAME in(
+(select SCHEDULE_NAME from schedule
+group by SCHEDULE_NAME having count(SCHEDULE_NAME)>1)
+) 
+and a.start_date_time = (select max(start_date_time) from SCHEDULE b where b.SCHEDULE_NAME=a.SCHEDULE_NAME)
+AND exists(select 1 from main c where a.DOMAIN_NAME = C.DOMAIN_NAME and a.SCHEDULE_NAME=c.SCHEDULE_NAME)
+);
+/*????SCHEDULE_NAME????*/
+insert into schedule_newest( 
+select * from SCHEDULE a where a.SCHEDULE_NAME in(
+(select SCHEDULE_NAME from schedule
+group by SCHEDULE_NAME having count(SCHEDULE_NAME)=1) 
+)
+AND exists(select 1 from main c where a.DOMAIN_NAME = C.DOMAIN_NAME and a.SCHEDULE_NAME=c.SCHEDULE_NAME)
+);
+
+
+delete from schedule_temp;
+delete from logtxt where log_type=2;
+
+END IF;
+END$$
+DELIMITER ;
